@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f4ee">
+    <meta name="description" content="Explore the Kasi Rentals demo: a simple way to discover rooms and homes by location.">
+    <title>Kasi Rentals — sample listings</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1d2922;
+        --muted: #68736b;
+        --green: #214f39;
+        --green-dark: #173a29;
+        --lime: #d7ed9b;
+        --paper: #f5f4ee;
+        --white: #fffefa;
+        --line: #e5e6dd;
+        --orange: #e98b55;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--paper); }
+      button, input, select { font: inherit; }
+      button, a, select { -webkit-tap-highlight-color: transparent; }
+      a { color: inherit; }
+
+      .announcement {
+        padding: 9px 16px;
+        color: #f8f6e8;
+        background: var(--green-dark);
+        text-align: center;
+        font-size: 12px;
+        letter-spacing: .025em;
+      }
+      .announcement strong { color: var(--lime); }
+      .wrap { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+      header { height: 76px; display: flex; align-items: center; justify-content: space-between; }
+      .brand { display: inline-flex; gap: 10px; align-items: center; text-decoration: none; font-size: 19px; font-weight: 800; letter-spacing: -.05em; }
+      .brand-mark { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 12px; color: var(--green-dark); background: var(--lime); }
+      .brand-mark svg { width: 19px; height: 19px; }
+      .header-note { color: var(--muted); font-size: 13px; }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.07fr .93fr;
+        gap: 36px;
+        align-items: center;
+        min-height: 390px;
+        padding: 45px 48px;
+        border-radius: 24px;
+        color: white;
+        background: var(--green);
+      }
+      .hero::after {
+        position: absolute;
+        top: -165px;
+        right: 33%;
+        width: 450px;
+        height: 450px;
+        border: 1px solid rgb(255 255 255 / 13%);
+        border-radius: 50%;
+        content: "";
+        pointer-events: none;
+      }
+      .hero-copy { position: relative; z-index: 1; }
+      .eyebrow { color: var(--lime); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+      h1 { max-width: 470px; margin: 14px 0 15px; font-size: clamp(38px, 5vw, 58px); line-height: .99; letter-spacing: -.06em; }
+      .hero-copy > p { max-width: 410px; margin: 0; color: rgb(255 255 255 / 76%); font-size: 15px; line-height: 1.65; }
+      .search-box { display: flex; gap: 8px; max-width: 460px; margin-top: 26px; padding: 7px; border-radius: 13px; background: var(--white); }
+      .search-box label { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+      .search-box select { flex: 1; min-width: 0; padding: 0 9px; color: var(--ink); background: transparent; border: 0; outline-color: var(--green); }
+      .primary-button, .search-button { display: inline-flex; justify-content: center; align-items: center; gap: 8px; min-height: 45px; padding: 0 17px; color: white; background: var(--green-dark); border: 0; border-radius: 9px; font-size: 13px; font-weight: 750; cursor: pointer; transition: background .18s, transform .18s; }
+      .primary-button:hover, .search-button:hover { background: #102b1d; transform: translateY(-1px); }
+      .search-button svg { width: 16px; height: 16px; }
+      .hero-visual { position: relative; z-index: 1; min-height: 285px; }
+      .hero-photo { position: absolute; inset: 4px 12px 4px 30px; overflow: hidden; border: 5px solid rgb(255 255 255 / 88%); border-radius: 18px; transform: rotate(2deg); background: #af9a7d; box-shadow: 0 20px 50px rgb(0 0 0 / 19%); }
+      .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+      .photo-label { position: absolute; right: 4px; bottom: 17px; padding: 12px 15px; color: var(--ink); background: var(--lime); border-radius: 10px; box-shadow: 0 8px 22px rgb(0 0 0 / 14%); transform: rotate(-2deg); }
+      .photo-label span { display: block; font-size: 10px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+      .photo-label strong { display: block; margin-top: 3px; font-size: 14px; }
+
+      .trust-row { display: flex; flex-wrap: wrap; gap: 23px; margin-top: 21px; color: rgb(255 255 255 / 78%); font-size: 11px; }
+      .trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+      .trust-row svg { width: 14px; height: 14px; color: var(--lime); }
+
+      .listings { padding: 66px 0 72px; }
+      .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 22px; margin-bottom: 22px; }
+      .section-heading .eyebrow { color: #63814f; }
+      h2 { margin: 7px 0 0; font-size: clamp(25px, 3vw, 34px); letter-spacing: -.045em; }
+      .section-note { margin: 0 0 3px; color: var(--muted); font-size: 13px; }
+      .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+      .filter-row::-webkit-scrollbar { display: none; }
+      .filter-chip { flex: 0 0 auto; padding: 9px 15px; color: #58645c; background: transparent; border: 1px solid #dfe1d7; border-radius: 30px; font-size: 12px; font-weight: 700; cursor: pointer; }
+      .filter-chip:hover, .filter-chip[aria-pressed="true"] { color: white; background: var(--green); border-color: var(--green); }
+      .listing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+      .listing-card { overflow: hidden; background: var(--white); border: 1px solid var(--line); border-radius: 15px; transition: transform .18s, box-shadow .18s; }
+      .listing-card:hover { transform: translateY(-3px); box-shadow: 0 13px 28px rgb(30 45 34 / 8%); }
+      .listing-card[hidden] { display: none; }
+      .listing-image { position: relative; height: 190px; overflow: hidden; background: #ddd4c6; }
+      .listing-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+      .listing-card:hover .listing-image img { transform: scale(1.035); }
+      .listing-badge { position: absolute; top: 12px; left: 12px; padding: 6px 9px; color: var(--green-dark); background: var(--lime); border-radius: 20px; font-size: 10px; font-weight: 800; }
+      .listing-body { padding: 15px; }
+      .location-line { display: flex; align-items: center; gap: 5px; color: #68756c; font-size: 11px; }
+      .location-line svg { width: 13px; height: 13px; color: #74945d; }
+      .listing-body h3 { margin: 7px 0 10px; font-size: 16px; letter-spacing: -.025em; }
+      .listing-meta { display: flex; gap: 14px; padding-bottom: 13px; color: #657168; border-bottom: 1px solid var(--line); font-size: 11px; }
+      .listing-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-top: 12px; }
+      .price { color: var(--green-dark); font-size: 17px; font-weight: 850; letter-spacing: -.04em; }
+      .price small { color: var(--muted); font-size: 10px; font-weight: 500; letter-spacing: 0; }
+      .details-button { padding: 8px 11px; color: var(--green); background: #f0f3e8; border: 0; border-radius: 8px; font-size: 11px; font-weight: 750; cursor: pointer; }
+      .details-button:hover { background: #e4ebd6; }
+      .empty-state { display: none; padding: 35px; color: var(--muted); text-align: center; background: var(--white); border: 1px dashed #d5d9cc; border-radius: 14px; }
+      .empty-state.visible { display: block; }
+
+      .how-it-works { display: grid; grid-template-columns: .8fr 1.2fr; gap: 35px; align-items: center; margin-bottom: 70px; padding: 32px; background: #eceee4; border-radius: 18px; }
+      .how-it-works h2 { font-size: 25px; }
+      .how-it-works p { max-width: 340px; margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+      .step { padding: 16px; background: var(--white); border-radius: 12px; }
+      .step-number { display: grid; width: 25px; height: 25px; place-items: center; color: var(--green-dark); background: var(--lime); border-radius: 8px; font-size: 11px; font-weight: 800; }
+      .step strong { display: block; margin-top: 12px; font-size: 12px; }
+      .step p { margin: 5px 0 0; font-size: 11px; line-height: 1.5; }
+
+      footer { padding: 22px 0; border-top: 1px solid var(--line); }
+      .footer-row { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 11px; }
+      .footer-row strong { color: var(--ink); }
+      .footer-demo { color: #83906f; }
+
+      .toast { position: fixed; z-index: 10; right: 20px; bottom: 20px; max-width: min(360px, calc(100% - 40px)); padding: 15px 18px; color: white; background: var(--green-dark); border-radius: 12px; box-shadow: 0 10px 32px rgb(0 0 0 / 19%); font-size: 13px; line-height: 1.45; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s, transform .2s; }
+      .toast.visible { opacity: 1; transform: translateY(0); }
+      .chat-launcher { position: fixed; z-index: 5; right: 22px; bottom: 22px; display: flex; align-items: center; gap: 9px; min-height: 51px; padding: 0 17px; color: white; background: #216b4c; border: 0; border-radius: 30px; box-shadow: 0 7px 22px rgb(24 65 43 / 24%); font-size: 12px; font-weight: 800; cursor: pointer; transition: transform .18s; }
+      .chat-launcher:hover { transform: translateY(-2px); }
+      .chat-launcher svg { width: 19px; height: 19px; }
+      .chat-panel { position: fixed; z-index: 6; right: 22px; bottom: 84px; display: none; flex-direction: column; width: min(360px, calc(100% - 30px)); height: min(490px, calc(100dvh - 120px)); overflow: hidden; background: #f1f5ef; border: 1px solid #d8e0d7; border-radius: 16px; box-shadow: 0 14px 45px rgb(27 43 32 / 22%); }
+      .chat-panel.open { display: flex; }
+      .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 13px 15px; color: white; background: #216b4c; }
+      .chat-title { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 800; }
+      .chat-avatar { display: grid; width: 31px; height: 31px; place-items: center; color: var(--green-dark); background: var(--lime); border-radius: 50%; }
+      .chat-avatar svg { width: 16px; height: 16px; }
+      .chat-status { display: block; margin-top: 2px; color: rgb(255 255 255 / 75%); font-size: 10px; font-weight: 500; }
+      .chat-close { display: grid; width: 30px; height: 30px; place-items: center; color: white; background: transparent; border: 0; border-radius: 8px; font-size: 21px; cursor: pointer; }
+      .chat-close:hover { background: rgb(255 255 255 / 14%); }
+      .chat-messages { display: flex; flex: 1; flex-direction: column; gap: 9px; overflow-y: auto; padding: 14px 12px; }
+      .chat-message { max-width: 84%; padding: 10px 12px; color: #26342b; background: white; border-radius: 4px 12px 12px 12px; box-shadow: 0 1px 2px rgb(0 0 0 / 5%); font-size: 12px; line-height: 1.5; white-space: pre-line; }
+      .chat-message.user { align-self: flex-end; color: #173523; background: #dff3cb; border-radius: 12px 4px 12px 12px; }
+      .chat-hint { padding: 8px 12px; color: #69776d; font-size: 10px; text-align: center; }
+      .chat-form { display: flex; gap: 8px; padding: 10px; background: white; border-top: 1px solid #e4e9e3; }
+      .chat-form input { flex: 1; min-width: 0; padding: 10px 12px; background: #f2f5f0; border: 1px solid transparent; border-radius: 22px; outline-color: #5e966d; font-size: 12px; }
+      .chat-form button { display: grid; width: 39px; height: 39px; flex: 0 0 auto; place-items: center; color: white; background: #216b4c; border: 0; border-radius: 50%; cursor: pointer; }
+      .chat-form button svg { width: 17px; height: 17px; }
+
+      @media (max-width: 780px) {
+        .hero { grid-template-columns: 1fr .75fr; gap: 12px; padding: 35px 27px; }
+        .hero-visual { min-height: 245px; }
+        .hero-photo { inset: 8px 4px 8px 20px; }
+        .listing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .how-it-works { grid-template-columns: 1fr; gap: 22px; }
+      }
+      @media (max-width: 560px) {
+        .wrap { width: min(100% - 28px, 430px); }
+        header { height: 64px; }
+        .header-note { font-size: 11px; }
+        .hero { grid-template-columns: 1fr; min-height: 0; padding: 31px 22px 20px; border-radius: 18px; }
+        .hero::after { top: -240px; right: -120px; }
+        h1 { max-width: 350px; font-size: 43px; }
+        .hero-copy > p { font-size: 13px; }
+        .search-box { margin-top: 20px; }
+        .search-button { padding-inline: 13px; }
+        .hero-visual { min-height: 165px; margin-top: 12px; }
+        .hero-photo { inset: 0 45px 0 26px; }
+        .photo-label { right: 2px; bottom: 7px; padding: 9px 11px; }
+        .photo-label strong { font-size: 12px; }
+        .trust-row { gap: 11px 16px; margin-top: 15px; font-size: 10px; }
+        .listings { padding: 46px 0 48px; }
+        .section-heading { align-items: start; flex-direction: column; gap: 7px; }
+        .listing-grid { grid-template-columns: 1fr; }
+        .listing-image { height: 205px; }
+        .how-it-works { margin-bottom: 48px; padding: 22px; }
+        .steps { grid-template-columns: 1fr; }
+        .step { display: grid; grid-template-columns: 28px 1fr; column-gap: 10px; align-items: center; }
+        .step-number { grid-row: span 2; }
+        .step strong { margin-top: 0; }
+        .step p { margin-top: 3px; }
+        .footer-row { flex-direction: column; gap: 7px; }
+        .chat-launcher { right: 14px; bottom: 14px; min-height: 47px; }
+        .chat-panel { right: 10px; bottom: 72px; width: calc(100% - 20px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="announcement"><strong>Interactive preview</strong> &nbsp;·&nbsp; Sample listings only — no account needed</div>
+    <div class="wrap">
+      <header>
+        <a class="brand" href="./chat.html" aria-label="Open the Kasi Rentals chat demo">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11h.01M16 11h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </span>
+          kasi rentals
+        </a>
+        <a class="header-note" href="./chat.html">Try the chatbot →</a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <div class="eyebrow">Good homes, close to home</div>
+            <h1 id="hero-title">Find your place in the kasi.</h1>
+            <p>Start with the location you know. Browse rooms and homes with clear prices and the details that matter.</p>
+            <form class="search-box" id="search-form">
+              <label for="location-select">Choose a location</label>
+              <select id="location-select" name="location" required>
+                <option value="" selected disabled>Choose your location</option>
+                <option value="Tembisa">Tembisa</option>
+                <option value="Soweto">Soweto</option>
+                <option value="Katlehong">Katlehong</option>
+                <option value="Mamelodi">Mamelodi</option>
+              </select>
+              <button class="search-button" type="submit">
+                Find rentals
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </form>
+            <div class="trust-row">
+              <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Browse by location</span>
+              <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18m5-14H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>See monthly rent</span>
+              <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="1.5" stroke="currentColor" stroke-width="1.5"/><path d="m21 15-5-5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>View the space</span>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="A bright, welcoming room">
+            <div class="hero-photo">
+              <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&amp;fit=crop&amp;w=1000&amp;q=85" alt="Sunlit living room with a comfortable sofa" fetchpriority="high">
+            </div>
+            <div class="photo-label"><span>Start with a place</span><strong>Find your next chapter</strong></div>
+          </div>
+        </section>
+
+        <section class="listings" id="available-rentals" aria-labelledby="listings-title">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">A few places to get started</div>
+              <h2 id="listings-title">Explore sample rentals</h2>
+            </div>
+            <p class="section-note" id="results-note">Choose a location to see matching examples.</p>
+          </div>
+          <div class="filter-row" role="group" aria-label="Filter by location">
+            <button class="filter-chip" type="button" aria-pressed="true" data-filter="all">All locations</button>
+            <button class="filter-chip" type="button" aria-pressed="false" data-filter="Tembisa">Tembisa</button>
+            <button class="filter-chip" type="button" aria-pressed="false" data-filter="Soweto">Soweto</button>
+            <button class="filter-chip" type="button" aria-pressed="false" data-filter="Katlehong">Katlehong</button>
+            <button class="filter-chip" type="button" aria-pressed="false" data-filter="Mamelodi">Mamelodi</button>
+          </div>
+          <div class="listing-grid" id="listing-grid">
+            <article class="listing-card" data-location="Tembisa">
+              <div class="listing-image">
+                <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Neat furnished bedroom in a shared home" loading="lazy">
+                <span class="listing-badge">2 rooms open</span>
+              </div>
+              <div class="listing-body">
+                <div class="location-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="1.8"/></svg>Tembisa · Birch Acres</div>
+                <h3>Bright room near the taxi route</h3>
+                <div class="listing-meta"><span>Room in shared home</span><span>4 rooms total</span></div>
+                <div class="listing-footer"><div class="price">R2,500 <small>/ month</small></div><button class="details-button" type="button" data-details="Bright room near the taxi route in Birch Acres, Tembisa. 2 rooms are available out of 4. Sample monthly rent: R2,500.">View details</button></div>
+              </div>
+            </article>
+            <article class="listing-card" data-location="Soweto">
+              <div class="listing-image">
+                <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Comfortable modern living area in a small home" loading="lazy">
+                <span class="listing-badge">1 room open</span>
+              </div>
+              <div class="listing-body">
+                <div class="location-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="1.8"/></svg>Soweto · Orlando East</div>
+                <h3>Private room with a shared yard</h3>
+                <div class="listing-meta"><span>Room in family home</span><span>3 rooms total</span></div>
+                <div class="listing-footer"><div class="price">R2,100 <small>/ month</small></div><button class="details-button" type="button" data-details="Private room with a shared yard in Orlando East, Soweto. 1 room is available out of 3. Sample monthly rent: R2,100.">View details</button></div>
+              </div>
+            </article>
+            <article class="listing-card" data-location="Katlehong">
+              <div class="listing-image">
+                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Simple, airy apartment interior" loading="lazy">
+                <span class="listing-badge">Whole home</span>
+              </div>
+              <div class="listing-body">
+                <div class="location-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="1.8"/></svg>Katlehong · Palm Ridge</div>
+                <h3>Sunny two-bedroom starter home</h3>
+                <div class="listing-meta"><span>Whole house</span><span>2 bedrooms</span></div>
+                <div class="listing-footer"><div class="price">R4,800 <small>/ month</small></div><button class="details-button" type="button" data-details="Sunny two-bedroom starter home in Palm Ridge, Katlehong. Whole house, 2 bedrooms. Sample monthly rent: R4,800.">View details</button></div>
+              </div>
+            </article>
+            <article class="listing-card" data-location="Mamelodi">
+              <div class="listing-image">
+                <img src="https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Bedroom in a clean, welcoming rental home" loading="lazy">
+                <span class="listing-badge">1 room open</span>
+              </div>
+              <div class="listing-body">
+                <div class="location-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="1.8"/></svg>Mamelodi · East</div>
+                <h3>Cosy room in a quiet home</h3>
+                <div class="listing-meta"><span>Room in shared home</span><span>3 rooms total</span></div>
+                <div class="listing-footer"><div class="price">R1,900 <small>/ month</small></div><button class="details-button" type="button" data-details="Cosy room in a quiet shared home in Mamelodi East. 1 room is available out of 3. Sample monthly rent: R1,900.">View details</button></div>
+              </div>
+            </article>
+          </div>
+          <div class="empty-state" id="empty-state" role="status">No sample rentals for this location yet. Try another location above.</div>
+        </section>
+
+        <section class="how-it-works" aria-labelledby="how-title">
+          <div>
+            <div class="eyebrow">Simple as a hello</div>
+            <h2 id="how-title">Your search starts with a place.</h2>
+            <p>We’re making it easier to find local rooms and homes. In the full experience, ask the WhatsApp bot and get available places sent right to your chat.</p>
+          </div>
+          <div class="steps">
+            <div class="step"><span class="step-number">1</span><strong>Pick a location</strong><p>Start with the neighbourhood that works for you.</p></div>
+            <div class="step"><span class="step-number">2</span><strong>See your options</strong><p>Compare sample rent, room counts and photos.</p></div>
+            <div class="step"><span class="step-number">3</span><strong>Make it home</strong><p>Ask questions and arrange a viewing with the owner.</p></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      <div class="wrap footer-row">
+        <span><strong>kasi rentals</strong> · Finding a place, closer to home.</span>
+        <span class="footer-demo">Demo preview · Sample listings are fictional and not available to rent.</span>
+      </div>
+    </footer>
+
+    <button class="chat-launcher" id="chat-launcher" type="button" aria-expanded="false" aria-controls="chat-panel">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.5-.7L4 20l1.2-3.4A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      Try the chat demo
+    </button>
+    <section class="chat-panel" id="chat-panel" aria-label="Kasi Rentals chat demo" aria-hidden="true">
+      <div class="chat-header">
+        <div class="chat-title">
+          <span class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+          <span>Kasi Rentals<span class="chat-status">Interactive preview · not WhatsApp</span></span>
+        </div>
+        <button class="chat-close" id="chat-close" type="button" aria-label="Close chat">×</button>
+      </div>
+      <div class="chat-messages" id="chat-messages" aria-live="polite">
+        <div class="chat-message">Hi! Welcome to Kasi Rentals. Where would you like to look for a room or house?</div>
+        <div class="chat-hint">Try: Tembisa, Soweto, Katlehong or Mamelodi</div>
+      </div>
+      <form class="chat-form" id="chat-form">
+        <label for="chat-input" class="visually-hidden">Type a location</label>
+        <input id="chat-input" name="message" autocomplete="off" placeholder="Type a location…" required>
+        <button type="submit" aria-label="Send location">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+    </section>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <style>.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }</style>
+
+    <script>
+      (() => {
+        const cards = [...document.querySelectorAll(".listing-card")];
+        const chips = [...document.querySelectorAll(".filter-chip")];
+        const resultsNote = document.getElementById("results-note");
+        const emptyState = document.getElementById("empty-state");
+        const locationSelect = document.getElementById("location-select");
+        const toast = document.getElementById("toast");
+        const chatPanel = document.getElementById("chat-panel");
+        const chatLauncher = document.getElementById("chat-launcher");
+        const chatMessages = document.getElementById("chat-messages");
+        let currentLocation = "all";
+        let toastTimer;
+
+        function setLocation(location) {
+          currentLocation = location;
+          let visibleCount = 0;
+          for (const card of cards) {
+            const visible = location === "all" || card.dataset.location === location;
+            card.hidden = !visible;
+            if (visible) visibleCount += 1;
+          }
+          for (const chip of chips) {
+            chip.setAttribute("aria-pressed", String(chip.dataset.filter === location));
+          }
+          emptyState.classList.toggle("visible", visibleCount === 0);
+          resultsNote.textContent = location === "all"
+            ? "Choose a location to see matching examples."
+            : `${visibleCount} sample ${visibleCount === 1 ? "place" : "places"} in ${location}.`;
+          if (location !== "all") locationSelect.value = location;
+        }
+
+        document.getElementById("search-form").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const location = locationSelect.value;
+          if (!location) return;
+          setLocation(location);
+          document.getElementById("available-rentals").scrollIntoView({ behavior: "smooth" });
+        });
+
+        for (const chip of chips) {
+          chip.addEventListener("click", () => setLocation(chip.dataset.filter));
+        }
+
+        for (const button of document.querySelectorAll("[data-details]")) {
+          button.addEventListener("click", () => showToast(button.dataset.details));
+        }
+
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.add("visible");
+          window.clearTimeout(toastTimer);
+          toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 4500);
+        }
+
+        function addChatMessage(message, sender) {
+          const bubble = document.createElement("div");
+          bubble.className = `chat-message${sender === "user" ? " user" : ""}`;
+          bubble.textContent = message;
+          chatMessages.append(bubble);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function openChat() {
+          chatPanel.classList.add("open");
+          chatPanel.setAttribute("aria-hidden", "false");
+          chatLauncher.setAttribute("aria-expanded", "true");
+          document.getElementById("chat-input").focus();
+        }
+
+        function closeChat() {
+          chatPanel.classList.remove("open");
+          chatPanel.setAttribute("aria-hidden", "true");
+          chatLauncher.setAttribute("aria-expanded", "false");
+          chatLauncher.focus();
+        }
+
+        chatLauncher.addEventListener("click", openChat);
+        document.getElementById("chat-close").addEventListener("click", closeChat);
+
+        document.getElementById("chat-form").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const input = document.getElementById("chat-input");
+          const requested = input.value.trim();
+          if (!requested) return;
+          addChatMessage(requested, "user");
+          input.value = "";
+
+          const match = cards.find((card) =>
+            card.dataset.location.toLowerCase().includes(requested.toLowerCase())
+          );
+          window.setTimeout(() => {
+            if (match) {
+              const details = match.querySelector("[data-details]").dataset.details;
+              addChatMessage(`Here’s a sample listing for ${match.dataset.location}:\n${details}\n\nThis is demo content, not a live rental or WhatsApp message.`, "bot");
+              setLocation(match.dataset.location);
+            } else {
+              addChatMessage("I don’t have sample rentals for that location yet. Try Tembisa, Soweto, Katlehong or Mamelodi.", "bot");
+            }
+          }, 350);
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && chatPanel.classList.contains("open")) closeChat();
+        });
+      })();
+    </script>
+  </body>
+</html>
