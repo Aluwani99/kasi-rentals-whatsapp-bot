@@ -52,6 +52,7 @@ The service exposes `GET /webhook` for Meta verification and `POST /webhook` for
 - New conversations and greetings receive a prompt to enter a location.
 - A location searches active listings by partial, case-insensitive match, returning up to five properties.
 - Each result includes the property type, location, monthly rent, number of available and total bedrooms, description, and available listing photos.
+- Each live listing reply includes a public dashboard detail link keyed by the Supabase property ID, so a renter can open that listing's other photos and details.
 - If no listing photo exists, details are sent as text. Photos are sent using short-lived signed Supabase Storage URLs.
 - Inbound and outbound messages are persisted. Duplicate inbound provider message IDs are ignored.
 - `hi`, `hello`, `hey`, `start`, `menu`, or `change location` restarts the location prompt.

@@ -9,11 +9,13 @@ const LOCATION_PROMPT =
   "Hi! Welcome to Kasi Rentals. To find available rooms or houses, please send the location you want to search (for example, Tembisa or Soweto).";
 const RESET_WORDS = new Set(["hi", "hello", "hey", "start", "menu"]);
 const MAX_CAPTION_LENGTH = 1024;
+const DASHBOARD_URL = "https://aluwani99.github.io/kasi-rentals-dashboard/";
 
 export function formatListing(listing: Listing): string {
   const description = listing.description.trim();
   const details = [
     listing.title,
+    `More photos: ${DASHBOARD_URL}?property=${encodeURIComponent(listing.id)}`,
     `${listing.property_type} in ${listing.location}`,
     `Rent: R${listing.monthly_rent.toLocaleString("en-ZA")} per month`,
     `${listing.available_rooms} room${listing.available_rooms === 1 ? "" : "s"} available of ${listing.bedrooms} total`,
