@@ -11,7 +11,11 @@ describe("WhatsApp-style static bot demo", () => {
   });
 
   it("includes a location-first conversation without backend credentials", () => {
-    expect(demo).toContain("Which area would you like to find a room or house in?");
+    expect(demo).toContain('placeholder="Type Hi to start…"');
+    expect(demo).toContain("Hi! Welcome to Kasi Rentals");
+    expect(demo).toContain("Please choose your preferred location from the dropdown below.");
+    expect(demo).toContain("Choose an available location");
+    expect(demo).toContain("Show rentals");
     for (const location of ["Tembisa", "Soweto", "Katlehong", "Mamelodi"]) {
       expect(demo).toContain(location);
     }
