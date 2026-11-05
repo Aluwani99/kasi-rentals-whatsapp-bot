@@ -4,6 +4,19 @@ A Node.js webhook for discovering active room and house rentals through the Meta
 
 The dashboard repository owns database migrations and listing management. This service does not create or alter the shared schema: it reads `properties` with `status = active`, reads `property_images`, and writes to `conversations` and `messages`.
 
+## Account-free static demo
+
+The static demo in `docs/` works without a Meta app, Supabase project, backend, or build step. It includes fictional sample rentals, location filters, and a simulated chat panel; it does not send WhatsApp messages or show live listings.
+
+To publish it from this repository:
+
+1. Merge the demo changes into `main`.
+2. In the repository's **Settings → Pages**, set the build and deployment source to **GitHub Actions**.
+3. Run the **Deploy static demo to GitHub Pages** workflow from the Actions tab, or push a change to `docs/` on `main`.
+4. Open the published URL shown in the workflow's `github-pages` environment.
+
+The workflow uploads only the static `docs/` folder and requires no secrets. Images in the preview are loaded from Unsplash and therefore need an internet connection.
+
 ## Requirements
 
 - Node.js 20+
