@@ -19,6 +19,14 @@ describe("WhatsApp-style static bot demo", () => {
     for (const location of ["Tembisa", "Soweto", "Katlehong", "Mamelodi"]) {
       expect(demo).toContain(location);
     }
+    for (const suburb of ["Ebony Park", "Ivory Park", "Birch Acres", "Kaalfontein"]) {
+      expect(demo).toContain(suburb);
+    }
+    expect(demo).toContain("Choose a suburb in Tembisa");
+    expect(demo).toContain("https://aluwani99.github.io/kasi-rentals-dashboard/");
+    expect(demo).toContain("Ask an agent");
+    expect(demo).toContain("Thandi Mokoena");
+    expect(demo).toContain("hello@kasirentals.co.za");
     expect(demo).toContain("Preview only.");
     expect(demo).toContain("not connected to WhatsApp or a live rentals database");
     expect(demo).not.toContain("SUPABASE_SERVICE_ROLE_KEY");

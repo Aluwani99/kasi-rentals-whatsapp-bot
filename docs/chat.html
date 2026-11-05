@@ -69,6 +69,9 @@
       .listing-preview img { width: 76px; height: 73px; object-fit: cover; border-radius: 6px; }
       .listing-preview strong { display: block; margin: 3px 0 4px; font-size: 11px; }
       .listing-preview span { display: block; margin-top: 3px; color: #59685e; font-size: 10px; line-height: 1.4; }
+      .listing-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+      .chat-action { display: inline-flex; align-items: center; justify-content: center; padding: 7px 9px; color: var(--green); background: #f2f7f0; border: 1px solid #d5e0d7; border-radius: 7px; font-size: 10px; font-weight: 750; text-decoration: none; cursor: pointer; }
+      .chat-action:hover { background: #e7f2e7; border-color: #9dc8a8; }
       .typing { display: none; width: fit-content; gap: 4px; margin: 0 0 9px; padding: 10px 13px; background: white; border-radius: 3px 10px 10px 10px; }
       .typing.visible { display: flex; }
       .typing i { width: 5px; height: 5px; background: #829087; border-radius: 50%; animation: dot 1s infinite ease-in-out; }
@@ -127,10 +130,10 @@
         </div>
         <div class="eyebrow">WhatsApp bot · interactive preview</div>
         <h1>Find a room by chatting.</h1>
-        <p>Start by choosing a location. The Kasi Rentals bot will show example rooms and homes with rent, availability and photos—just like a WhatsApp conversation.</p>
+        <p>Type “Hi” to begin. Choose a town, then a suburb in Tembisa, and the bot will show example rooms with rent, availability and photos.</p>
         <ul class="intro-points">
-          <li><span class="check">✓</span> Try location buttons or type a place in the chat.</li>
-          <li><span class="check">✓</span> See example rental details and room photos.</li>
+          <li><span class="check">✓</span> Choose Tembisa, then pick Ebony Park, Ivory Park or another suburb.</li>
+          <li><span class="check">✓</span> Open the rental dashboard or ask the demo agent for help.</li>
           <li><span class="check">✓</span> No sign-up or WhatsApp account needed for this preview.</li>
         </ul>
         <div class="demo-note">
@@ -172,44 +175,98 @@
     </main>
     <script>
       (() => {
+        const dashboardUrl = "https://aluwani99.github.io/kasi-rentals-dashboard/";
+        const agentEmail = "hello@kasirentals.co.za";
+        const tembisaSuburbs = {
+          "Ebony Park": [
+            {
+              title: "Sunny room close to the shops",
+              area: "Ebony Park, Tembisa",
+              kind: "Room in shared home",
+              rent: "R1,800",
+              availability: "2 rooms available · 4 rooms total",
+              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=320&h=260&q=80"
+            },
+            {
+              title: "Neat room with a shared kitchen",
+              area: "Ebony Park, Tembisa",
+              kind: "Room in shared home",
+              rent: "R2,000",
+              availability: "1 room available · 3 rooms total",
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+            }
+          ],
+          "Ivory Park": [
+            {
+              title: "Private room near public transport",
+              area: "Ivory Park, Tembisa",
+              kind: "Room in shared home",
+              rent: "R1,700",
+              availability: "1 room available · 3 rooms total",
+              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=320&h=260&q=80"
+            }
+          ],
+          "Birch Acres": [
+            {
+              title: "Bright room near the taxi route",
+              area: "Birch Acres, Tembisa",
+              kind: "Room in shared home",
+              rent: "R2,500",
+              availability: "2 rooms available · 4 rooms total",
+              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=320&h=260&q=80"
+            }
+          ],
+          Kaalfontein: [
+            {
+              title: "Affordable room in a quiet home",
+              area: "Kaalfontein, Tembisa",
+              kind: "Room in shared home",
+              rent: "R1,600",
+              availability: "1 room available · 2 rooms total",
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+            }
+          ]
+        };
         const rentals = {
           Tembisa: {
-            title: "Bright room near the taxi route",
-            area: "Birch Acres, Tembisa",
-            kind: "Room in shared home",
-            rent: "R2,500",
-            availability: "2 rooms available · 4 rooms total",
-            image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=320&h=260&q=80"
+            suburbs: tembisaSuburbs
           },
           Soweto: {
-            title: "Private room with a shared yard",
-            area: "Orlando East, Soweto",
-            kind: "Room in family home",
-            rent: "R2,100",
-            availability: "1 room available · 3 rooms total",
-            image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=320&h=260&q=80"
+            listings: [{
+              title: "Private room with a shared yard",
+              area: "Orlando East, Soweto",
+              kind: "Room in family home",
+              rent: "R2,100",
+              availability: "1 room available · 3 rooms total",
+              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=320&h=260&q=80"
+            }]
           },
           Katlehong: {
-            title: "Sunny two-bedroom starter home",
-            area: "Palm Ridge, Katlehong",
-            kind: "Whole house",
-            rent: "R4,800",
-            availability: "2 bedrooms · whole home",
-            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=320&h=260&q=80"
+            listings: [{
+              title: "Sunny two-bedroom starter home",
+              area: "Palm Ridge, Katlehong",
+              kind: "Whole house",
+              rent: "R4,800",
+              availability: "2 bedrooms · whole home",
+              image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=320&h=260&q=80"
+            }]
           },
           Mamelodi: {
-            title: "Cosy room in a quiet home",
-            area: "Mamelodi East",
-            kind: "Room in shared home",
-            rent: "R1,900",
-            availability: "1 room available · 3 rooms total",
-            image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+            listings: [{
+              title: "Cosy room in a quiet home",
+              area: "Mamelodi East",
+              kind: "Room in shared home",
+              rent: "R1,900",
+              availability: "1 room available · 3 rooms total",
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+            }]
           }
         };
         const messages = document.getElementById("chat-messages");
         const typing = document.getElementById("typing");
         const form = document.getElementById("chat-form");
         const input = document.getElementById("chat-input");
+        let waitingForTembisaSuburb = false;
 
         function scrollToBottom() {
           messages.scrollTop = messages.scrollHeight;
@@ -227,16 +284,16 @@
           scrollToBottom();
         }
 
-        function addLocationPicker() {
+        function addPicker(labelText, optionLabels, onChoose) {
           const bubble = document.createElement("div");
           bubble.className = "bubble location-picker";
 
           const label = document.createElement("label");
-          label.textContent = "Choose an available location";
+          label.textContent = labelText;
           const controls = document.createElement("div");
           controls.className = "location-picker-controls";
           const select = document.createElement("select");
-          select.setAttribute("aria-label", "Choose an available rental location");
+          select.setAttribute("aria-label", labelText);
 
           const placeholder = document.createElement("option");
           placeholder.value = "";
@@ -245,7 +302,7 @@
           placeholder.disabled = true;
           select.append(placeholder);
 
-          for (const location of Object.keys(rentals)) {
+          for (const location of optionLabels) {
             const option = document.createElement("option");
             option.value = location;
             option.textContent = location;
@@ -261,7 +318,7 @@
               return;
             }
             addBubble(select.value, true);
-            search(select.value);
+            onChoose(select.value);
             bubble.remove();
           });
 
@@ -279,40 +336,104 @@
         }
 
         function addListing(location) {
-          const listing = rentals[location];
+          const listings = rentals[location].listings;
+          addListings(listings, location);
+        }
+
+        function addListings(listings, area) {
           const bubble = document.createElement("div");
           bubble.className = "bubble";
-
-          const intro = document.createElement("span");
-          intro.textContent = `Here’s a sample place in ${location}:`;
+          const intro = document.createElement("div");
+          intro.textContent = `Here ${listings.length === 1 ? "is" : "are"} ${listings.length} sample ${listings.length === 1 ? "room" : "rooms"} in ${area}:`;
           bubble.append(intro);
 
-          const card = document.createElement("div");
-          card.className = "listing-preview";
-          const image = document.createElement("img");
-          image.src = listing.image;
-          image.alt = `Sample photo for ${listing.title}`;
-          image.loading = "lazy";
-          const content = document.createElement("div");
-          const title = document.createElement("strong");
-          title.textContent = listing.title;
-          const area = document.createElement("span");
-          area.textContent = listing.area;
-          const rent = document.createElement("span");
-          rent.textContent = `${listing.rent} / month`;
-          const availability = document.createElement("span");
-          availability.textContent = listing.availability;
-          content.append(title, area, rent, availability);
-          card.append(image, content);
-          bubble.append(card);
+          for (const listing of listings) {
+            const card = document.createElement("div");
+            card.className = "listing-preview";
+            const image = document.createElement("img");
+            image.src = listing.image;
+            image.alt = `Sample photo for ${listing.title}`;
+            image.loading = "lazy";
+            const content = document.createElement("div");
+            const title = document.createElement("strong");
+            title.textContent = listing.title;
+            const place = document.createElement("span");
+            place.textContent = listing.area;
+            const kind = document.createElement("span");
+            kind.textContent = listing.kind;
+            const rent = document.createElement("span");
+            rent.textContent = `${listing.rent} / month`;
+            const availability = document.createElement("span");
+            availability.textContent = listing.availability;
+            content.append(title, place, kind, rent, availability);
+            card.append(image, content);
 
-          const end = document.createElement("span");
-          end.textContent = "Want to look somewhere else? Send another location.";
-          bubble.append(document.createElement("br"), end);
+            const actions = document.createElement("div");
+            actions.className = "listing-actions";
+            const dashboardLink = document.createElement("a");
+            dashboardLink.className = "chat-action";
+            dashboardLink.href = dashboardUrl;
+            dashboardLink.target = "_blank";
+            dashboardLink.rel = "noopener noreferrer";
+            dashboardLink.textContent = "Open rental dashboard";
+            actions.append(dashboardLink);
+
+            const agentButton = document.createElement("button");
+            agentButton.className = "chat-action";
+            agentButton.type = "button";
+            agentButton.textContent = "Ask an agent";
+            agentButton.addEventListener("click", () => addAgentPicker(listing));
+            actions.append(agentButton);
+
+            const listingWrap = document.createElement("div");
+            listingWrap.append(card, actions);
+            bubble.append(listingWrap);
+          }
+
+          const end = document.createElement("div");
+          end.textContent = "Want to search another location? Type its name.";
+          bubble.append(end);
           const time = document.createElement("span");
           time.className = "bubble-time";
           time.textContent = new Intl.DateTimeFormat([], { hour: "2-digit", minute: "2-digit" }).format(new Date());
           bubble.append(time);
+          messages.insertBefore(bubble, typing);
+          scrollToBottom();
+        }
+
+        function addAgentPicker(listing) {
+          addBubble("Choose how you would like to contact the rental agent.");
+          const bubble = document.createElement("div");
+          bubble.className = "bubble location-picker";
+          const label = document.createElement("label");
+          label.textContent = "Available demo agent";
+          const controls = document.createElement("div");
+          controls.className = "location-picker-controls";
+          const select = document.createElement("select");
+          select.setAttribute("aria-label", "Choose an agent");
+          const option = document.createElement("option");
+          option.value = "Thandi Mokoena";
+          option.textContent = "Thandi Mokoena";
+          select.append(option);
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = "Get contact";
+          button.addEventListener("click", () => {
+            const contact = document.createElement("div");
+            contact.className = "bubble";
+            contact.textContent = `Thandi Mokoena can assist with “${listing.title}”. Email the rental team to request a viewing: `;
+            const email = document.createElement("a");
+            email.href = `mailto:${agentEmail}?subject=${encodeURIComponent(`Rental enquiry: ${listing.title}`)}`;
+            email.textContent = agentEmail;
+            contact.append(email);
+            messages.insertBefore(contact, typing);
+            bubble.remove();
+            scrollToBottom();
+          });
+
+          controls.append(select, button);
+          bubble.append(label, controls);
           messages.insertBefore(bubble, typing);
           scrollToBottom();
         }
@@ -324,6 +445,16 @@
             return;
           }
           addBubble(`Let me check the sample rentals in ${location}…`);
+          if (location === "Tembisa") {
+            waitingForTembisaSuburb = true;
+            addBubble("Tembisa has several suburbs. Which area would you prefer?");
+            addPicker("Choose a suburb in Tembisa", Object.keys(tembisaSuburbs), (suburb) => {
+              waitingForTembisaSuburb = false;
+              addBubble(suburb, true);
+              addListings(tembisaSuburbs[suburb], `${suburb}, Tembisa`);
+            });
+            return;
+          }
           typing.classList.add("visible");
           scrollToBottom();
           window.setTimeout(() => {
@@ -338,15 +469,34 @@
           if (!text) return;
           const normalized = text.toLocaleLowerCase();
           if (["hi", "hello", "hey", "start", "menu"].includes(normalized)) {
+            waitingForTembisaSuburb = false;
             addBubble(text, true);
             addBubble("Hi! Welcome to Kasi Rentals 👋\nPlease choose your preferred location from the dropdown below.");
-            addLocationPicker();
+            addPicker("Choose an available location", Object.keys(rentals), search);
             input.value = "";
             input.focus();
             return;
           }
           addBubble(text, true);
           input.value = "";
+          if (waitingForTembisaSuburb) {
+            const suburb = Object.keys(tembisaSuburbs).find((candidate) =>
+              candidate.toLocaleLowerCase() === normalized
+            );
+            if (suburb) {
+              waitingForTembisaSuburb = false;
+              addListings(tembisaSuburbs[suburb], `${suburb}, Tembisa`);
+            } else {
+              addBubble("Please choose one of the listed Tembisa suburbs, or type its name.");
+              addPicker("Choose a suburb in Tembisa", Object.keys(tembisaSuburbs), (choice) => {
+                waitingForTembisaSuburb = false;
+                addBubble(choice, true);
+                addListings(tembisaSuburbs[choice], `${choice}, Tembisa`);
+              });
+            }
+            input.focus();
+            return;
+          }
           search(text);
           input.focus();
         });
