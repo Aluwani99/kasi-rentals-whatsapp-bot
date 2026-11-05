@@ -10,7 +10,7 @@ describe("WhatsApp-style static bot demo", () => {
     expect(home).toContain('window.location.replace("./chat.html")');
   });
 
-  it("includes a location-first conversation without backend credentials", () => {
+  it("includes a location-first conversation connected to the public Supabase API", () => {
     expect(demo).toContain('placeholder="Type Hi to start…"');
     expect(demo).toContain("Hi! Welcome to Kasi Rentals");
     expect(demo).toContain("Please choose your preferred location from the dropdown below.");
@@ -36,8 +36,14 @@ describe("WhatsApp-style static bot demo", () => {
     ]) {
       expect(demo).toContain(listingId);
     }
-    expect(demo).toContain("Preview only.");
-    expect(demo).toContain("not connected to WhatsApp or a live rentals database");
+    expect(demo).toContain("loads active rentals from Supabase");
+    expect(demo).toContain("property_images");
+    expect(demo).toContain("Connected to Supabase");
+    expect(demo).toContain("does not send WhatsApp messages");
+    const config = readFileSync(new URL("../docs/supabase-config.js", import.meta.url), "utf8");
+    expect(config).toContain("https://lkffpunzdkzweitynmpd.supabase.co");
+    expect(config).toContain("sb_publishable_");
+    expect(config).not.toContain("service_role");
     expect(demo).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(demo).not.toContain("WHATSAPP_ACCESS_TOKEN");
   });

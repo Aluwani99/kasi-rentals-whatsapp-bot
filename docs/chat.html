@@ -67,6 +67,7 @@
       .location-picker button:hover { background: var(--green-dark); }
       .listing-preview { display: grid; grid-template-columns: 76px 1fr; gap: 9px; width: 100%; margin-top: 7px; padding: 7px; background: white; border: 1px solid #e7e9e2; border-radius: 9px; }
       .listing-preview img { width: 76px; height: 73px; object-fit: cover; border-radius: 6px; }
+      .listing-image-placeholder { width: 76px; height: 73px; background: linear-gradient(145deg, #e8eee4, #dce8df); border-radius: 6px; }
       .listing-preview strong { display: block; margin: 3px 0 4px; font-size: 11px; }
       .listing-preview span { display: block; margin-top: 3px; color: #59685e; font-size: 10px; line-height: 1.4; }
       .listing-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -130,15 +131,15 @@
         </div>
         <div class="eyebrow">WhatsApp bot · interactive preview</div>
         <h1>Find a room by chatting.</h1>
-        <p>Type “Hi” to begin. Choose a town, then a suburb in Tembisa, and the bot will show example rooms with rent, availability and photos.</p>
+        <p>Type “Hi” to begin. Choose an available location, then a suburb in Tembisa when prompted, to see live rental details, prices and photos.</p>
         <ul class="intro-points">
-          <li><span class="check">✓</span> Choose Tembisa, then pick Ebony Park, Ivory Park or another suburb.</li>
-          <li><span class="check">✓</span> Open the rental dashboard or ask the demo agent for help.</li>
+          <li><span class="check">✓</span> Choose Tembisa, then pick an available suburb.</li>
+          <li><span class="check">✓</span> Open the selected rental's photos or ask Thandi for help.</li>
           <li><span class="check">✓</span> No sign-up or WhatsApp account needed for this preview.</li>
         </ul>
         <div class="demo-note">
           <span class="demo-note-icon" aria-hidden="true">ⓘ</span>
-          <span><strong>Preview only.</strong> This chat runs in your browser with fictional listings. It is not connected to WhatsApp or a live rentals database.</span>
+          <span><strong>Demo preview.</strong> This chat runs in your browser and does not send WhatsApp messages. It loads active rentals from Supabase; sample listings appear only if the live project is unavailable.</span>
         </div>
         <a class="back-link" href="./rentals.html">See the sample listings page →</a>
       </section>
@@ -169,14 +170,18 @@
             </form>
           </div>
         </div>
-        <div class="simulated-label">Simulated WhatsApp chat · sample data only</div>
+        <div class="simulated-label" id="data-status">Connecting to live rentals…</div>
         <div class="phone-bottom"><div class="phone-home-indicator"></div></div>
       </section>
     </main>
+    <script src="./supabase-config.js"></script>
     <script>
       (() => {
         const dashboardUrl = "https://aluwani99.github.io/kasi-rentals-dashboard/";
         const agentWhatsAppNumber = "27602671468";
+        const supabaseConfig = window.KASI_RENTALS_SUPABASE;
+        const townNames = ["Tembisa", "Soweto", "Katlehong", "Mamelodi"];
+        let liveProperties = null;
         const tembisaSuburbs = {
           "Ebony Park": [
             {
@@ -307,7 +312,129 @@
         const typing = document.getElementById("typing");
         const form = document.getElementById("chat-form");
         const input = document.getElementById("chat-input");
+        const dataStatus = document.getElementById("data-status");
         let waitingForTembisaSuburb = false;
+        let liveSuburbSelection = null;
+
+        function supabaseHeaders() {
+          return {
+            apikey: supabaseConfig.publishableKey,
+            Authorization: `Bearer ${supabaseConfig.publishableKey}`,
+            "Content-Type": "application/json"
+          };
+        }
+
+        async function fetchActiveProperties() {
+          const query = new URLSearchParams({
+            select: "id,title,property_type,description,location,monthly_rent,bedrooms,available_rooms",
+            status: "eq.active",
+            order: "created_at.desc",
+            limit: "500"
+          });
+          const response = await fetch(`${supabaseConfig.url}/rest/v1/properties?${query}`, {
+            headers: supabaseHeaders()
+          });
+          if (!response.ok) throw new Error(`Supabase listing request failed (${response.status})`);
+          return await response.json();
+        }
+
+        function getLocationParts(location) {
+          return location.split(",").map((part) => part.trim()).filter(Boolean);
+        }
+
+        function getTown(location) {
+          const parts = getLocationParts(location);
+          const knownTown = parts.find((part) =>
+            townNames.some((town) => town.toLocaleLowerCase() === part.toLocaleLowerCase())
+          );
+          return knownTown || parts[parts.length - 1] || location;
+        }
+
+        function getSuburb(location, town) {
+          const parts = getLocationParts(location);
+          return parts.find((part) => part.toLocaleLowerCase() !== town.toLocaleLowerCase()) || location;
+        }
+
+        function getAvailableLocations() {
+          if (liveProperties === null) return Object.keys(rentals);
+          return [...new Set(liveProperties.map((property) => getTown(property.location)))]
+            .sort((a, b) => a.localeCompare(b));
+        }
+
+        async function fetchSignedPhoto(storagePath) {
+          const encodedPath = storagePath.split("/").map(encodeURIComponent).join("/");
+          const response = await fetch(
+            `${supabaseConfig.url}/storage/v1/object/sign/property-images/${encodedPath}`,
+            {
+              method: "POST",
+              headers: supabaseHeaders(),
+              body: JSON.stringify({ expiresIn: 3600 })
+            }
+          );
+          if (!response.ok) throw new Error(`Supabase photo request failed (${response.status})`);
+          const result = await response.json();
+          return new URL(result.signedURL, `${supabaseConfig.url}/storage/v1/`).href;
+        }
+
+        async function fetchLiveListings(properties) {
+          const ids = properties.map((property) => property.id);
+          const query = new URLSearchParams({
+            select: "property_id,storage_path,caption,sort_order",
+            property_id: `in.(${ids.join(",")})`,
+            order: "sort_order.asc"
+          });
+          const response = await fetch(`${supabaseConfig.url}/rest/v1/property_images?${query}`, {
+            headers: supabaseHeaders()
+          });
+          if (!response.ok) throw new Error(`Supabase photo list request failed (${response.status})`);
+          const images = await response.json();
+          const imageByProperty = new Map();
+          for (const image of images) {
+            if (!imageByProperty.has(image.property_id)) imageByProperty.set(image.property_id, image);
+          }
+
+          return Promise.all(properties.map(async (property) => {
+            const image = imageByProperty.get(property.id);
+            let imageUrl = "";
+            if (image) {
+              try {
+                imageUrl = await fetchSignedPhoto(image.storage_path);
+              } catch (error) {
+                console.error(`Could not load a photo for rental ${property.id}`, error);
+              }
+            }
+            const isHouse = property.property_type.toLocaleLowerCase() === "house";
+            return {
+              id: property.id,
+              title: property.title,
+              area: property.location,
+              kind: isHouse ? "Whole house" : "Room",
+              rent: `R${Number(property.monthly_rent).toLocaleString("en-ZA")}`,
+              availability: isHouse
+                ? `${property.bedrooms} bedrooms · whole home`
+                : `${property.available_rooms} rooms available · ${property.bedrooms} rooms total`,
+              description: property.description,
+              image: imageUrl,
+              isLive: true
+            };
+          }));
+        }
+
+        async function initializeLiveRentals() {
+          try {
+            liveProperties = await fetchActiveProperties();
+            dataStatus.textContent = liveProperties.length
+              ? `Connected to Supabase · ${liveProperties.length} active rental${liveProperties.length === 1 ? "" : "s"}`
+              : "Connected to Supabase · no active rentals are published yet";
+          } catch (error) {
+            console.error("Could not load live Kasi Rentals listings", error);
+            liveProperties = null;
+            dataStatus.textContent = "Sample listings · Supabase is not ready yet";
+            addBubble("I couldn't connect to the live rental listings, so this preview is showing sample rentals. Check that the Supabase schema has been applied and that the project is available.");
+          } finally {
+            input.disabled = false;
+          }
+        }
 
         function scrollToBottom() {
           messages.scrollTop = messages.scrollHeight;
@@ -371,7 +498,7 @@
 
         function getLocation(value) {
           const normalized = value.trim().toLocaleLowerCase();
-          return Object.keys(rentals).find((location) =>
+          return getAvailableLocations().find((location) =>
             location.toLocaleLowerCase().includes(normalized) || normalized.includes(location.toLocaleLowerCase())
           );
         }
@@ -385,16 +512,26 @@
           const bubble = document.createElement("div");
           bubble.className = "bubble";
           const intro = document.createElement("div");
-          intro.textContent = `Here ${listings.length === 1 ? "is" : "are"} ${listings.length} sample ${listings.length === 1 ? "room" : "rooms"} in ${area}:`;
+          const isLive = listings.some((listing) => listing.isLive);
+          const rentalType = isLive ? "available rental" : "sample rental";
+          intro.textContent = `Here ${listings.length === 1 ? "is" : "are"} ${listings.length} ${rentalType}${listings.length === 1 ? "" : "s"} in ${area}:`;
           bubble.append(intro);
 
           for (const listing of listings) {
             const card = document.createElement("div");
             card.className = "listing-preview";
-            const image = document.createElement("img");
-            image.src = listing.image;
-            image.alt = `Sample photo for ${listing.title}`;
-            image.loading = "lazy";
+            if (listing.image) {
+              const image = document.createElement("img");
+              image.src = listing.image;
+              image.alt = `${listing.isLive ? "Photo" : "Sample photo"} for ${listing.title}`;
+              image.loading = "lazy";
+              card.append(image);
+            } else {
+              const placeholder = document.createElement("div");
+              placeholder.className = "listing-image-placeholder";
+              placeholder.setAttribute("aria-label", "No listing photo available");
+              card.append(placeholder);
+            }
             const content = document.createElement("div");
             const title = document.createElement("strong");
             title.textContent = listing.title;
@@ -407,13 +544,15 @@
             const availability = document.createElement("span");
             availability.textContent = listing.availability;
             content.append(title, place, kind, rent, availability);
-            card.append(image, content);
+            card.append(content);
 
             const actions = document.createElement("div");
             actions.className = "listing-actions";
             const detailLink = document.createElement("a");
             detailLink.className = "chat-action";
-            detailLink.href = `./rental.html?listing=${encodeURIComponent(listing.id)}`;
+            detailLink.href = listing.isLive
+              ? `${dashboardUrl}?property=${encodeURIComponent(listing.id)}`
+              : `./rental.html?listing=${encodeURIComponent(listing.id)}`;
             detailLink.target = "_blank";
             detailLink.rel = "noopener noreferrer";
             detailLink.textContent = "See all photos & details";
@@ -493,7 +632,50 @@
         function search(value) {
           const location = getLocation(value);
           if (!location) {
-            addBubble("Sorry, I don't have sample rentals for that area yet. Try Tembisa, Soweto, Katlehong or Mamelodi.");
+            addBubble(liveProperties === null
+              ? "Sorry, I don't have sample rentals for that area yet. Try Tembisa, Soweto, Katlehong or Mamelodi."
+              : "I couldn't find active rentals in that location yet. Try another location.");
+            return;
+          }
+          if (liveProperties !== null) {
+            const properties = liveProperties.filter((property) => getTown(property.location) === location);
+            const subareas = [...new Set(properties
+              .filter((property) => getLocationParts(property.location).length > 1)
+              .map((property) => getSuburb(property.location, location)))].sort((a, b) => a.localeCompare(b));
+            addBubble(`Let me check the live rentals in ${location}…`);
+            if (subareas.length) {
+              waitingForTembisaSuburb = true;
+              liveSuburbSelection = { location, properties };
+              addBubble(`${location} has several suburbs. Which area would you prefer?`);
+              addPicker(`Choose a suburb in ${location}`, subareas, async (suburb) => {
+                waitingForTembisaSuburb = false;
+                liveSuburbSelection = null;
+                addBubble(suburb, true);
+                try {
+                  const selected = properties.filter((property) =>
+                    getSuburb(property.location, location).toLocaleLowerCase() === suburb.toLocaleLowerCase()
+                  );
+                  addListings(await fetchLiveListings(selected), `${suburb}, ${location}`);
+                } catch (error) {
+                  console.error("Could not load selected rental photos", error);
+                  addBubble("I found the listings, but couldn't load their photos. Please try again later.");
+                }
+              });
+              return;
+            }
+            typing.classList.add("visible");
+            scrollToBottom();
+            fetchLiveListings(properties)
+              .then((listings) => {
+                typing.classList.remove("visible");
+                if (!listings.length) addBubble(`There are no active rentals in ${location} right now.`);
+                else addListings(listings, location);
+              })
+              .catch((error) => {
+                typing.classList.remove("visible");
+                console.error("Could not load selected rentals", error);
+                addBubble("I couldn't load rentals for that location. Please try again later.");
+              });
             return;
           }
           addBubble(`Let me check the sample rentals in ${location}…`);
@@ -522,9 +704,16 @@
           const normalized = text.toLocaleLowerCase();
           if (["hi", "hello", "hey", "start", "menu"].includes(normalized)) {
             waitingForTembisaSuburb = false;
+            liveSuburbSelection = null;
             addBubble(text, true);
+            if (liveProperties !== null && liveProperties.length === 0) {
+              addBubble("Welcome to Kasi Rentals! There are no active rentals published yet. Please check back soon.");
+              input.value = "";
+              input.focus();
+              return;
+            }
             addBubble("Hi! Welcome to Kasi Rentals 👋\nPlease choose your preferred location from the dropdown below.");
-            addPicker("Choose an available location", Object.keys(rentals), search);
+            addPicker("Choose an available location", getAvailableLocations(), search);
             input.value = "";
             input.focus();
             return;
@@ -532,6 +721,31 @@
           addBubble(text, true);
           input.value = "";
           if (waitingForTembisaSuburb) {
+            if (liveSuburbSelection) {
+              const { location, properties } = liveSuburbSelection;
+              const suburb = [...new Set(properties.map((property) => getSuburb(property.location, location)))]
+                .find((candidate) => candidate.toLocaleLowerCase() === normalized);
+              if (!suburb) {
+                addBubble("Please choose one of the listed suburbs, or type its name.");
+                input.focus();
+                return;
+              }
+              waitingForTembisaSuburb = false;
+              liveSuburbSelection = null;
+              typing.classList.add("visible");
+              fetchLiveListings(properties.filter((property) =>
+                getSuburb(property.location, location).toLocaleLowerCase() === suburb.toLocaleLowerCase()
+              )).then((listings) => {
+                typing.classList.remove("visible");
+                addListings(listings, `${suburb}, ${location}`);
+              }).catch((error) => {
+                typing.classList.remove("visible");
+                console.error("Could not load selected rental photos", error);
+                addBubble("I found the listings, but couldn't load their photos. Please try again later.");
+              });
+              input.focus();
+              return;
+            }
             const suburb = Object.keys(tembisaSuburbs).find((candidate) =>
               candidate.toLocaleLowerCase() === normalized
             );
@@ -552,6 +766,9 @@
           search(text);
           input.focus();
         });
+
+        input.disabled = true;
+        initializeLiveRentals();
       })();
     </script>
   </body>
