@@ -59,9 +59,12 @@
       .bubble.outgoing { margin-left: auto; background: var(--outgoing); border-radius: 10px 3px 10px 10px; }
       .bubble-time { display: inline-block; float: right; margin: 5px 0 -3px 10px; color: #829087; font-size: 9px; }
       .bubble.outgoing .bubble-time::after { content: "  ✓✓"; color: #56a8a0; }
-      .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; max-width: 90%; margin: 0 0 11px; animation: appear .18s ease-out; }
-      .quick-reply { padding: 8px 11px; color: var(--green); background: white; border: 1px solid #d5e0d7; border-radius: 18px; box-shadow: 0 1px 2px rgb(0 0 0 / 6%); font-size: 11px; font-weight: 750; cursor: pointer; }
-      .quick-reply:hover { background: #edf7ee; border-color: #9dc8a8; }
+      .location-picker { width: min(300px, 94%); }
+      .location-picker label { display: block; margin: 0 0 7px; color: #53645a; font-size: 11px; font-weight: 700; }
+      .location-picker-controls { display: flex; gap: 7px; }
+      .location-picker select { flex: 1; min-width: 0; padding: 9px 10px; color: var(--ink); background: #f7f9f5; border: 1px solid #d6e0d7; border-radius: 8px; font-size: 11px; }
+      .location-picker button { padding: 0 11px; color: white; background: var(--green-light); border: 0; border-radius: 8px; font-size: 11px; font-weight: 750; cursor: pointer; }
+      .location-picker button:hover { background: var(--green-dark); }
       .listing-preview { display: grid; grid-template-columns: 76px 1fr; gap: 9px; width: 100%; margin-top: 7px; padding: 7px; background: white; border: 1px solid #e7e9e2; border-radius: 9px; }
       .listing-preview img { width: 76px; height: 73px; object-fit: cover; border-radius: 6px; }
       .listing-preview strong { display: block; margin: 3px 0 4px; font-size: 11px; }
@@ -149,20 +152,14 @@
         <div class="conversation">
           <div class="chat-background" id="chat-messages" aria-live="polite">
             <div class="date-chip">TODAY</div>
-            <div class="bubble">Hi 👋 Welcome to Kasi Rentals!<br><br>Which area would you like to find a room or house in?<span class="bubble-time">now</span></div>
-            <div class="quick-replies" id="quick-replies" aria-label="Choose a location">
-              <button class="quick-reply" type="button" data-location="Tembisa">Tembisa</button>
-              <button class="quick-reply" type="button" data-location="Soweto">Soweto</button>
-              <button class="quick-reply" type="button" data-location="Katlehong">Katlehong</button>
-              <button class="quick-reply" type="button" data-location="Mamelodi">Mamelodi</button>
-            </div>
+            <div class="bubble">Welcome! Type <strong>Hi</strong> to start finding a room or house.<span class="bubble-time">now</span></div>
             <div class="typing" id="typing" aria-label="Bot is typing"><i></i><i></i><i></i></div>
           </div>
           <div class="input-bar">
             <span class="input-icon" aria-hidden="true">＋</span>
             <form class="chat-form" id="chat-form">
-              <label class="sr-only" for="chat-input">Enter a location</label>
-              <input id="chat-input" autocomplete="off" placeholder="Type a location…" required>
+              <label class="sr-only" for="chat-input">Type Hi or enter a location</label>
+              <input id="chat-input" autocomplete="off" placeholder="Type Hi to start…" required>
               <button class="send" type="submit" aria-label="Send location">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
               </button>
@@ -210,7 +207,6 @@
           }
         };
         const messages = document.getElementById("chat-messages");
-        const quickReplies = document.getElementById("quick-replies");
         const typing = document.getElementById("typing");
         const form = document.getElementById("chat-form");
         const input = document.getElementById("chat-input");
@@ -227,6 +223,50 @@
           time.className = "bubble-time";
           time.textContent = new Intl.DateTimeFormat([], { hour: "2-digit", minute: "2-digit" }).format(new Date());
           bubble.append(time);
+          messages.insertBefore(bubble, typing);
+          scrollToBottom();
+        }
+
+        function addLocationPicker() {
+          const bubble = document.createElement("div");
+          bubble.className = "bubble location-picker";
+
+          const label = document.createElement("label");
+          label.textContent = "Choose an available location";
+          const controls = document.createElement("div");
+          controls.className = "location-picker-controls";
+          const select = document.createElement("select");
+          select.setAttribute("aria-label", "Choose an available rental location");
+
+          const placeholder = document.createElement("option");
+          placeholder.value = "";
+          placeholder.textContent = "Select a location…";
+          placeholder.selected = true;
+          placeholder.disabled = true;
+          select.append(placeholder);
+
+          for (const location of Object.keys(rentals)) {
+            const option = document.createElement("option");
+            option.value = location;
+            option.textContent = location;
+            select.append(option);
+          }
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = "Show rentals";
+          button.addEventListener("click", () => {
+            if (!select.value) {
+              select.focus();
+              return;
+            }
+            addBubble(select.value, true);
+            search(select.value);
+            bubble.remove();
+          });
+
+          controls.append(select, button);
+          bubble.append(label, controls);
           messages.insertBefore(bubble, typing);
           scrollToBottom();
         }
@@ -292,15 +332,6 @@
           }, 600);
         }
 
-        for (const button of document.querySelectorAll("[data-location]")) {
-          button.addEventListener("click", () => {
-            quickReplies.remove();
-            addBubble(button.dataset.location, true);
-            search(button.dataset.location);
-            input.focus();
-          });
-        }
-
         form.addEventListener("submit", (event) => {
           event.preventDefault();
           const text = input.value.trim();
@@ -308,7 +339,8 @@
           const normalized = text.toLocaleLowerCase();
           if (["hi", "hello", "hey", "start", "menu"].includes(normalized)) {
             addBubble(text, true);
-            addBubble("Hi again! Which area should I search? Try Tembisa, Soweto, Katlehong or Mamelodi.");
+            addBubble("Hi! Welcome to Kasi Rentals 👋\nPlease choose your preferred location from the dropdown below.");
+            addLocationPicker();
             input.value = "";
             input.focus();
             return;
