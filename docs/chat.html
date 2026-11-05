@@ -176,54 +176,80 @@
     <script>
       (() => {
         const dashboardUrl = "https://aluwani99.github.io/kasi-rentals-dashboard/";
-        const agentEmail = "hello@kasirentals.co.za";
+        const agentWhatsAppNumber = "27602671468";
         const tembisaSuburbs = {
           "Ebony Park": [
             {
+              id: "ebony-room-1",
               title: "Sunny room close to the shops",
               area: "Ebony Park, Tembisa",
               kind: "Room in shared home",
               rent: "R1,800",
               availability: "2 rooms available · 4 rooms total",
-              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85"
+              ]
             },
             {
+              id: "ebony-room-2",
               title: "Neat room with a shared kitchen",
               area: "Ebony Park, Tembisa",
               kind: "Room in shared home",
               rent: "R2,000",
               availability: "1 room available · 3 rooms total",
-              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85"
+              ]
             }
           ],
           "Ivory Park": [
             {
+              id: "ivory-room-1",
               title: "Private room near public transport",
               area: "Ivory Park, Tembisa",
               kind: "Room in shared home",
               rent: "R1,700",
               availability: "1 room available · 3 rooms total",
-              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85"
+              ]
             }
           ],
           "Birch Acres": [
             {
+              id: "birch-room-1",
               title: "Bright room near the taxi route",
               area: "Birch Acres, Tembisa",
               kind: "Room in shared home",
               rent: "R2,500",
               availability: "2 rooms available · 4 rooms total",
-              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85"
+              ]
             }
           ],
           Kaalfontein: [
             {
+              id: "kaalfontein-room-1",
               title: "Affordable room in a quiet home",
               area: "Kaalfontein, Tembisa",
               kind: "Room in shared home",
               rent: "R1,600",
               availability: "1 room available · 2 rooms total",
-              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85"
+              ]
             }
           ]
         };
@@ -233,32 +259,47 @@
           },
           Soweto: {
             listings: [{
+              id: "soweto-room-1",
               title: "Private room with a shared yard",
               area: "Orlando East, Soweto",
               kind: "Room in family home",
               rent: "R2,100",
               availability: "1 room available · 3 rooms total",
-              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85"
+              ]
             }]
           },
           Katlehong: {
             listings: [{
+              id: "katlehong-house-1",
               title: "Sunny two-bedroom starter home",
               area: "Palm Ridge, Katlehong",
               kind: "Whole house",
               rent: "R4,800",
               availability: "2 bedrooms · whole home",
-              image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85"
+              ]
             }]
           },
           Mamelodi: {
             listings: [{
+              id: "mamelodi-room-1",
               title: "Cosy room in a quiet home",
               area: "Mamelodi East",
               kind: "Room in shared home",
               rent: "R1,900",
               availability: "1 room available · 3 rooms total",
-              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=320&h=260&q=80"
+              image: "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+              images: [
+                "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=900&q=85",
+                "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=85"
+              ]
             }]
           }
         };
@@ -370,13 +411,21 @@
 
             const actions = document.createElement("div");
             actions.className = "listing-actions";
-            const dashboardLink = document.createElement("a");
-            dashboardLink.className = "chat-action";
-            dashboardLink.href = dashboardUrl;
-            dashboardLink.target = "_blank";
-            dashboardLink.rel = "noopener noreferrer";
-            dashboardLink.textContent = "Open rental dashboard";
-            actions.append(dashboardLink);
+            const detailLink = document.createElement("a");
+            detailLink.className = "chat-action";
+            detailLink.href = `./rental.html?listing=${encodeURIComponent(listing.id)}`;
+            detailLink.target = "_blank";
+            detailLink.rel = "noopener noreferrer";
+            detailLink.textContent = "See all photos & details";
+            actions.append(detailLink);
+
+            const dashboardLinkButton = document.createElement("a");
+            dashboardLinkButton.className = "chat-action";
+            dashboardLinkButton.href = dashboardUrl;
+            dashboardLinkButton.target = "_blank";
+            dashboardLinkButton.rel = "noopener noreferrer";
+            dashboardLinkButton.textContent = "Owner dashboard";
+            actions.append(dashboardLinkButton);
 
             const agentButton = document.createElement("button");
             agentButton.className = "chat-action";
@@ -418,15 +467,18 @@
 
           const button = document.createElement("button");
           button.type = "button";
-          button.textContent = "Get contact";
+          button.textContent = "WhatsApp Thandi";
           button.addEventListener("click", () => {
             const contact = document.createElement("div");
             contact.className = "bubble";
-            contact.textContent = `Thandi Mokoena can assist with “${listing.title}”. Email the rental team to request a viewing: `;
-            const email = document.createElement("a");
-            email.href = `mailto:${agentEmail}?subject=${encodeURIComponent(`Rental enquiry: ${listing.title}`)}`;
-            email.textContent = agentEmail;
-            contact.append(email);
+            contact.textContent = "Your WhatsApp message is ready for Thandi. Review it, then tap Send in WhatsApp: ";
+            const message = `Hi Thandi, I'm interested in "${listing.title}" in ${listing.area}. Is it still available? Please share more details and help me arrange a viewing.`;
+            const whatsappLink = document.createElement("a");
+            whatsappLink.href = `https://wa.me/${agentWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+            whatsappLink.target = "_blank";
+            whatsappLink.rel = "noopener noreferrer";
+            whatsappLink.textContent = "Open WhatsApp";
+            contact.append(whatsappLink);
             messages.insertBefore(contact, typing);
             bubble.remove();
             scrollToBottom();

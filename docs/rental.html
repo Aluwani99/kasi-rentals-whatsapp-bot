@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#075e54">
+    <meta name="description" content="View rental details and photos from Kasi Rentals.">
+    <title>Rental details — Kasi Rentals</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --green: #075e54;
+        --green-dark: #064b43;
+        --green-light: #128c7e;
+        --ink: #1d2925;
+        --muted: #66756d;
+        --paper: #f5f5ef;
+        --white: #fffefa;
+        --line: #e4e6dc;
+        --lime: #d7ed9b;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--paper); }
+      a { color: inherit; }
+      button { font: inherit; }
+      .wrap { width: min(940px, calc(100% - 32px)); margin: 0 auto; }
+      header { height: 70px; display: flex; justify-content: space-between; align-items: center; }
+      .brand { display: flex; align-items: center; gap: 9px; color: var(--green-dark); font-size: 15px; font-weight: 850; text-decoration: none; }
+      .brand-icon { display: grid; width: 34px; height: 34px; place-items: center; background: var(--lime); border-radius: 11px; }
+      .brand-icon svg { width: 18px; height: 18px; }
+      .top-link { color: var(--green); font-size: 12px; font-weight: 750; text-decoration: none; }
+      .top-link:hover { text-decoration: underline; }
+      main { padding: 18px 0 56px; }
+      .back { display: inline-flex; gap: 6px; align-items: center; margin: 0 0 16px; color: var(--green); font-size: 12px; font-weight: 750; text-decoration: none; }
+      .eyebrow { color: #788868; font-size: 10px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+      h1 { margin: 7px 0 5px; font-size: clamp(26px, 5vw, 40px); line-height: 1.08; letter-spacing: -.05em; }
+      .location { margin: 0; color: var(--muted); font-size: 13px; }
+      .gallery { display: grid; grid-template-columns: 1.35fr 1fr 1fr; grid-template-rows: 170px 170px; gap: 8px; overflow: hidden; margin-top: 21px; border-radius: 16px; }
+      .gallery button { position: relative; min-width: 0; overflow: hidden; padding: 0; background: #e3e3da; border: 0; cursor: zoom-in; }
+      .gallery button:first-child { grid-row: span 2; }
+      .gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
+      .gallery button:hover img { transform: scale(1.035); }
+      .gallery-count { position: absolute; right: 10px; bottom: 10px; padding: 7px 10px; color: #fff; background: rgb(18 33 25 / 78%); border-radius: 7px; font-size: 10px; font-weight: 750; }
+      .content { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 25px; align-items: start; margin-top: 19px; }
+      .details, .contact-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; }
+      .details { padding: 22px; }
+      .price { color: var(--green-dark); font-size: 25px; font-weight: 850; letter-spacing: -.04em; }
+      .price small { color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: 0; }
+      .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 21px; }
+      .fact { padding: 7px 10px; color: #43544a; background: #f0f3ea; border-radius: 20px; font-size: 11px; font-weight: 700; }
+      h2 { margin: 0 0 7px; font-size: 15px; letter-spacing: -.02em; }
+      .description { margin: 0; color: #58675e; font-size: 13px; line-height: 1.65; }
+      .disclaimer { margin: 18px 0 0; padding: 10px 12px; color: #6a704f; background: #f5f5e8; border-radius: 9px; font-size: 10px; line-height: 1.5; }
+      .contact-card { position: sticky; top: 16px; padding: 19px; }
+      .contact-card h2 { font-size: 17px; }
+      .contact-card p { margin: 7px 0 16px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+      .action { display: flex; width: 100%; min-height: 42px; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; padding: 9px 12px; border: 0; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; text-decoration: none; cursor: pointer; }
+      .action-primary { color: white; background: #128c7e; }
+      .action-primary:hover { background: var(--green-dark); }
+      .action-secondary { color: var(--green); background: #f0f3ea; }
+      .action-secondary:hover { background: #e4ebd6; }
+      .action svg { width: 15px; height: 15px; }
+      .empty { margin-top: 20px; padding: 28px; color: var(--muted); background: white; border: 1px solid var(--line); border-radius: 14px; text-align: center; }
+      .empty a { color: var(--green); font-weight: 750; }
+      .lightbox { position: fixed; z-index: 4; inset: 0; display: none; place-items: center; padding: 22px; background: rgb(9 17 13 / 88%); }
+      .lightbox.open { display: grid; }
+      .lightbox img { max-width: min(100%, 1050px); max-height: 86vh; object-fit: contain; border-radius: 8px; }
+      .lightbox-close { position: absolute; top: 13px; right: 16px; width: 42px; height: 42px; color: white; background: rgb(255 255 255 / 13%); border: 0; border-radius: 50%; font-size: 26px; cursor: pointer; }
+      footer { padding: 16px 0; color: var(--muted); border-top: 1px solid var(--line); font-size: 10px; }
+      @media (max-width: 690px) {
+        .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 185px 125px; }
+        .gallery button:first-child { grid-column: span 2; grid-row: auto; }
+        .content { grid-template-columns: 1fr; gap: 12px; }
+        .contact-card { position: static; }
+        main { padding-top: 12px; }
+      }
+      @media (max-width: 380px) {
+        .gallery { grid-template-rows: 165px 105px; gap: 5px; }
+        .details, .contact-card { padding: 16px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <a class="brand" href="./chat.html">
+          <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+          kasi rentals
+        </a>
+        <a class="top-link" href="https://aluwani99.github.io/kasi-rentals-dashboard/" target="_blank" rel="noopener noreferrer">Owner dashboard ↗</a>
+      </header>
+      <main id="rental-content"></main>
+      <footer>Demo property details and photos are examples only, not a live rental listing.</footer>
+    </div>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Rental photo">
+      <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close photo">×</button>
+      <img id="lightbox-image" alt="">
+    </div>
+    <script>
+      (() => {
+        const dashboardUrl = "https://aluwani99.github.io/kasi-rentals-dashboard/";
+        const agentNumber = "27602671468";
+        const listings = {
+          "ebony-room-1": {
+            title: "Sunny room close to the shops", area: "Ebony Park, Tembisa", kind: "Room in shared home",
+            rent: "R1,800", availability: "2 rooms available · 4 rooms total",
+            description: "A bright room in a shared home near local shops. Shared kitchen and common areas.",
+            images: [
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "ebony-room-2": {
+            title: "Neat room with a shared kitchen", area: "Ebony Park, Tembisa", kind: "Room in shared home",
+            rent: "R2,000", availability: "1 room available · 3 rooms total",
+            description: "A neat room in a friendly shared household with a shared kitchen.",
+            images: [
+              "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "ivory-room-1": {
+            title: "Private room near public transport", area: "Ivory Park, Tembisa", kind: "Room in shared home",
+            rent: "R1,700", availability: "1 room available · 3 rooms total",
+            description: "A private room with easy access to local public transport.",
+            images: [
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "birch-room-1": {
+            title: "Bright room near the taxi route", area: "Birch Acres, Tembisa", kind: "Room in shared home",
+            rent: "R2,500", availability: "2 rooms available · 4 rooms total",
+            description: "A bright shared-home room near the taxi route.",
+            images: [
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "kaalfontein-room-1": {
+            title: "Affordable room in a quiet home", area: "Kaalfontein, Tembisa", kind: "Room in shared home",
+            rent: "R1,600", availability: "1 room available · 2 rooms total",
+            description: "An affordable room in a quiet home in Kaalfontein.",
+            images: [
+              "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "soweto-room-1": {
+            title: "Private room with a shared yard", area: "Orlando East, Soweto", kind: "Room in family home",
+            rent: "R2,100", availability: "1 room available · 3 rooms total",
+            description: "A private room in a family home with a shared yard.",
+            images: [
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "katlehong-house-1": {
+            title: "Sunny two-bedroom starter home", area: "Palm Ridge, Katlehong", kind: "Whole house",
+            rent: "R4,800", availability: "2 bedrooms · whole home",
+            description: "A sunny two-bedroom starter home in Palm Ridge.",
+            images: [
+              "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85"
+            ]
+          },
+          "mamelodi-room-1": {
+            title: "Cosy room in a quiet home", area: "Mamelodi East", kind: "Room in shared home",
+            rent: "R1,900", availability: "1 room available · 3 rooms total",
+            description: "A cosy room in a quiet shared home in Mamelodi East.",
+            images: [
+              "https://images.unsplash.com/photo-1560185008-b033106af5c3?auto=format&fit=crop&w=1200&q=85",
+              "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=85"
+            ]
+          }
+        };
+
+        const content = document.getElementById("rental-content");
+        const listing = listings[new URLSearchParams(window.location.search).get("listing")];
+        if (!listing) {
+          content.innerHTML = '<div class="empty"><h1>Rental not found</h1><p>Choose a rental from the chat demo to view its photos.</p><a href="./chat.html">Back to the chat demo</a></div>';
+          return;
+        }
+
+        const heading = document.createElement("section");
+        heading.innerHTML = '<a class="back" href="./chat.html">← Back to chat</a><div class="eyebrow">Rental details · demo listing</div>';
+        const title = document.createElement("h1");
+        title.textContent = listing.title;
+        const place = document.createElement("p");
+        place.className = "location";
+        place.textContent = `⌖ ${listing.area} · ${listing.kind}`;
+        heading.append(title, place);
+
+        const gallery = document.createElement("section");
+        gallery.className = "gallery";
+        gallery.setAttribute("aria-label", "Rental photos");
+        for (const [index, src] of listing.images.entries()) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.setAttribute("aria-label", `View photo ${index + 1} of ${listing.images.length}`);
+          const image = document.createElement("img");
+          image.src = src;
+          image.alt = `${listing.title}, photo ${index + 1}`;
+          if (index > 0) image.loading = "lazy";
+          button.append(image);
+          if (index === listing.images.length - 1) {
+            const count = document.createElement("span");
+            count.className = "gallery-count";
+            count.textContent = `${listing.images.length} photos · tap to enlarge`;
+            button.append(count);
+          }
+          button.addEventListener("click", () => {
+            const lightbox = document.getElementById("lightbox");
+            const lightboxImage = document.getElementById("lightbox-image");
+            lightboxImage.src = src;
+            lightboxImage.alt = image.alt;
+            lightbox.classList.add("open");
+          });
+          gallery.append(button);
+        }
+
+        const contentRow = document.createElement("div");
+        contentRow.className = "content";
+        const details = document.createElement("section");
+        details.className = "details";
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = listing.rent;
+        const perMonth = document.createElement("small");
+        perMonth.textContent = " / month";
+        price.append(perMonth);
+        const facts = document.createElement("div");
+        facts.className = "facts";
+        for (const factText of [listing.availability, listing.kind]) {
+          const fact = document.createElement("span");
+          fact.className = "fact";
+          fact.textContent = factText;
+          facts.append(fact);
+        }
+        const descriptionTitle = document.createElement("h2");
+        descriptionTitle.textContent = "About this rental";
+        const description = document.createElement("p");
+        description.className = "description";
+        description.textContent = listing.description;
+        const disclaimer = document.createElement("p");
+        disclaimer.className = "disclaimer";
+        disclaimer.textContent = "Demo only: this rental and its photos are examples, not a live offer.";
+        details.append(price, facts, descriptionTitle, description, disclaimer);
+
+        const contact = document.createElement("aside");
+        contact.className = "contact-card";
+        const contactTitle = document.createElement("h2");
+        contactTitle.textContent = "Interested in this place?";
+        const contactText = document.createElement("p");
+        contactText.textContent = "Message Thandi about this specific rental on WhatsApp.";
+        const waLink = document.createElement("a");
+        waLink.className = "action action-primary";
+        waLink.href = `https://wa.me/${agentNumber}?text=${encodeURIComponent(`Hi Thandi, I'm interested in "${listing.title}" in ${listing.area}. Is it still available? Please share more details and help me arrange a viewing.`)}`;
+        waLink.target = "_blank";
+        waLink.rel = "noopener noreferrer";
+        waLink.textContent = "WhatsApp Thandi";
+        const dashboardLink = document.createElement("a");
+        dashboardLink.className = "action action-secondary";
+        dashboardLink.href = dashboardUrl;
+        dashboardLink.target = "_blank";
+        dashboardLink.rel = "noopener noreferrer";
+        dashboardLink.textContent = "Open owner's dashboard";
+        const note = document.createElement("p");
+        note.className = "description";
+        note.textContent = "WhatsApp opens with a message ready. Review it and tap Send.";
+        contact.append(contactTitle, contactText, waLink, dashboardLink, note);
+        contentRow.append(details, contact);
+        content.append(heading, gallery, contentRow);
+
+        function closeLightbox() {
+          document.getElementById("lightbox").classList.remove("open");
+        }
+        document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
+        document.getElementById("lightbox").addEventListener("click", (event) => {
+          if (event.target.id === "lightbox") closeLightbox();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeLightbox();
+        });
+      })();
+    </script>
+  </body>
+</html>

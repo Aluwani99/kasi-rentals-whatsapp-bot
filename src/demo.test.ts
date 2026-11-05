@@ -26,7 +26,16 @@ describe("WhatsApp-style static bot demo", () => {
     expect(demo).toContain("https://aluwani99.github.io/kasi-rentals-dashboard/");
     expect(demo).toContain("Ask an agent");
     expect(demo).toContain("Thandi Mokoena");
-    expect(demo).toContain("hello@kasirentals.co.za");
+    expect(demo).toContain("27602671468");
+    expect(demo).toContain("Hi Thandi, I'm interested in");
+    expect(demo).toContain("https://wa.me/");
+    expect(demo).toContain("See all photos & details");
+    for (const listingId of [
+      "ebony-room-1", "ebony-room-2", "ivory-room-1", "birch-room-1",
+      "kaalfontein-room-1", "soweto-room-1", "katlehong-house-1", "mamelodi-room-1"
+    ]) {
+      expect(demo).toContain(listingId);
+    }
     expect(demo).toContain("Preview only.");
     expect(demo).toContain("not connected to WhatsApp or a live rentals database");
     expect(demo).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
@@ -35,6 +44,19 @@ describe("WhatsApp-style static bot demo", () => {
 
   it("contains syntactically valid chatbot JavaScript", () => {
     const script = demo.match(/<script>([\s\S]*?)<\/script>/i)?.[1];
+    expect(script).toBeDefined();
+    expect(() => new Function(script!)).not.toThrow();
+  });
+
+  it("provides a specific listing detail page with photo gallery and agent WhatsApp link", () => {
+    const detail = readFileSync(new URL("../docs/rental.html", import.meta.url), "utf8");
+    expect(demo).toContain("./rental.html?listing=${encodeURIComponent(listing.id)}");
+    expect(detail).toContain('new URLSearchParams(window.location.search).get("listing")');
+    expect(detail).toContain('className = "gallery"');
+    expect(detail).toContain("for (const [index, src] of listing.images.entries())");
+    expect(detail).toContain("https://wa.me/${agentNumber}?text=");
+    expect(detail).toContain('href = dashboardUrl');
+    const script = detail.match(/<script>([\s\S]*?)<\/script>/i)?.[1];
     expect(script).toBeDefined();
     expect(() => new Function(script!)).not.toThrow();
   });
