@@ -6,7 +6,7 @@ The dashboard repository owns database migrations and listing management. This s
 
 ## Account-free static demo
 
-The static demo in `docs/` opens directly into a WhatsApp-style bot conversation and works without a Meta app, Supabase project, backend, or build step. Choose a location or type it into the chat to see fictional sample rentals. It simulates the bot conversation in your browser; it does not send WhatsApp messages or show live listings. The sample listings page remains available at `/rentals.html`.
+The static demo in `docs/` opens directly into a WhatsApp-style bot conversation and works without a Meta app, Supabase project, backend, or build step. Type `Hi`, choose a location, and for Tembisa choose a suburb such as Ebony Park or Ivory Park to see matching sample rentals. Each sample offers a link to the rental dashboard and an agent-help option with a demo contact email. The browser chat uses fictional sample listings; it does not send WhatsApp messages or show live listings. The sample listings page remains available at `/rentals.html`.
 
 To publish it from this repository:
 
