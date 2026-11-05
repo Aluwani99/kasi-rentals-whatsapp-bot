@@ -4,9 +4,13 @@ A Node.js webhook for discovering active room and house rentals through the Meta
 
 The dashboard repository owns database migrations and listing management. This service does not create or alter the shared schema: it reads `properties` with `status = active`, reads `property_images`, and writes to `conversations` and `messages`.
 
-## Account-free static demo
+## Static chat demo
 
-The static demo in `docs/` opens directly into a WhatsApp-style bot conversation and works without a Meta app, Supabase project, backend, or build step. Type `Hi`, choose a location, and for Tembisa choose a suburb such as Ebony Park or Ivory Park to see matching sample rentals. Each sample offers a link to the rental dashboard and an agent-help option with a demo contact email. The browser chat uses fictional sample listings; it does not send WhatsApp messages or show live listings. The sample listings page remains available at `/rentals.html`.
+The static demo in `docs/` opens into a WhatsApp-style conversation and reads active listings and their photos from the shared Supabase project. Type `Hi`, choose a location, and choose a suburb when prompted. Live listings link to their matching public detail page in the dashboard. If Supabase is unavailable, the preview falls back to fictional sample listings with detail pages hosted here. The WhatsApp contact link opens a prepared message to Thandi; the visitor must review and send it themselves. The browser chat itself does not send or receive WhatsApp messages.
+
+The browser uses only the Supabase publishable key in `docs/supabase-config.js`. This key is designed for public clients; row-level security in the shared dashboard migration limits anonymous reads to active listings and their images. Never place a service-role key or database password in `docs/`. Before expecting live rentals, apply `supabase/migrations/202611050001_initial_schema.sql` from the dashboard repository to the Supabase project's SQL Editor, then publish at least one active listing with photos. The separate dashboard app also needs its `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` build environment configured to manage listings.
+
+The sample listings page remains available at `/rentals.html`.
 
 To publish it from this repository:
 
@@ -52,6 +56,7 @@ The service exposes `GET /webhook` for Meta verification and `POST /webhook` for
 - New conversations and greetings receive a prompt to enter a location.
 - A location searches active listings by partial, case-insensitive match, returning up to five properties.
 - Each result includes the property type, location, monthly rent, number of available and total bedrooms, description, and available listing photos.
+- Each live listing reply includes a public dashboard detail link keyed by the Supabase property ID, so a renter can open that listing's other photos and details.
 - If no listing photo exists, details are sent as text. Photos are sent using short-lived signed Supabase Storage URLs.
 - Inbound and outbound messages are persisted. Duplicate inbound provider message IDs are ignored.
 - `hi`, `hello`, `hey`, `start`, `menu`, or `change location` restarts the location prompt.

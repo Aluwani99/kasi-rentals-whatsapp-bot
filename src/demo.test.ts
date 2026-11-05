@@ -10,7 +10,7 @@ describe("WhatsApp-style static bot demo", () => {
     expect(home).toContain('window.location.replace("./chat.html")');
   });
 
-  it("includes a location-first conversation without backend credentials", () => {
+  it("includes a location-first conversation connected to the public Supabase API", () => {
     expect(demo).toContain('placeholder="Type Hi to start…"');
     expect(demo).toContain("Hi! Welcome to Kasi Rentals");
     expect(demo).toContain("Please choose your preferred location from the dropdown below.");
@@ -26,15 +26,43 @@ describe("WhatsApp-style static bot demo", () => {
     expect(demo).toContain("https://aluwani99.github.io/kasi-rentals-dashboard/");
     expect(demo).toContain("Ask an agent");
     expect(demo).toContain("Thandi Mokoena");
-    expect(demo).toContain("hello@kasirentals.co.za");
-    expect(demo).toContain("Preview only.");
-    expect(demo).toContain("not connected to WhatsApp or a live rentals database");
+    expect(demo).toContain("27602671468");
+    expect(demo).toContain("Hi Thandi, I'm interested in");
+    expect(demo).toContain("https://wa.me/");
+    expect(demo).toContain("See all photos & details");
+    for (const listingId of [
+      "ebony-room-1", "ebony-room-2", "ivory-room-1", "birch-room-1",
+      "kaalfontein-room-1", "soweto-room-1", "katlehong-house-1", "mamelodi-room-1"
+    ]) {
+      expect(demo).toContain(listingId);
+    }
+    expect(demo).toContain("loads active rentals from Supabase");
+    expect(demo).toContain("property_images");
+    expect(demo).toContain("Connected to Supabase");
+    expect(demo).toContain("does not send WhatsApp messages");
+    const config = readFileSync(new URL("../docs/supabase-config.js", import.meta.url), "utf8");
+    expect(config).toContain("https://lkffpunzdkzweitynmpd.supabase.co");
+    expect(config).toContain("sb_publishable_");
+    expect(config).not.toContain("service_role");
     expect(demo).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(demo).not.toContain("WHATSAPP_ACCESS_TOKEN");
   });
 
   it("contains syntactically valid chatbot JavaScript", () => {
     const script = demo.match(/<script>([\s\S]*?)<\/script>/i)?.[1];
+    expect(script).toBeDefined();
+    expect(() => new Function(script!)).not.toThrow();
+  });
+
+  it("provides a specific listing detail page with photo gallery and agent WhatsApp link", () => {
+    const detail = readFileSync(new URL("../docs/rental.html", import.meta.url), "utf8");
+    expect(demo).toContain("./rental.html?listing=${encodeURIComponent(listing.id)}");
+    expect(detail).toContain('new URLSearchParams(window.location.search).get("listing")');
+    expect(detail).toContain('className = "gallery"');
+    expect(detail).toContain("for (const [index, src] of listing.images.entries())");
+    expect(detail).toContain("https://wa.me/${agentNumber}?text=");
+    expect(detail).toContain('href = dashboardUrl');
+    const script = detail.match(/<script>([\s\S]*?)<\/script>/i)?.[1];
     expect(script).toBeDefined();
     expect(() => new Function(script!)).not.toThrow();
   });

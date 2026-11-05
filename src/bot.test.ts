@@ -88,6 +88,9 @@ describe("RentalBot", () => {
   it("formats core listing details", () => {
     expect(formatListing(listing)).toContain("Near transport");
     expect(formatListing(listing)).toContain("Room in Tembisa");
+    expect(formatListing(listing)).toContain(
+      "https://aluwani99.github.io/kasi-rentals-dashboard/?property=property-1"
+    );
   });
 
   it("does not reply again to a duplicate inbound message", async () => {
