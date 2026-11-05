@@ -6,7 +6,7 @@ The dashboard repository owns database migrations and listing management. This s
 
 ## Account-free static demo
 
-The static demo in `docs/` works without a Meta app, Supabase project, backend, or build step. It includes fictional sample rentals, location filters, and a simulated chat panel; it does not send WhatsApp messages or show live listings.
+The static demo in `docs/` opens directly into a WhatsApp-style bot conversation and works without a Meta app, Supabase project, backend, or build step. Choose a location or type it into the chat to see fictional sample rentals. It simulates the bot conversation in your browser; it does not send WhatsApp messages or show live listings. The sample listings page remains available at `/rentals.html`.
 
 To publish it from this repository:
 
